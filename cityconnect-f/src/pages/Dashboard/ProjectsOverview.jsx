@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
   Calendar,
   Users,
@@ -7,17 +8,8 @@ import {
   MessageSquare,
 } from "lucide-react";
 import DiscussionForum from "./DiscussionForum"; // Import the DiscussionForum component
-import { projects } from "../../data/projectOverviewData";
 
-
-const ProjectCard = ({
-  title,
-  departments,
-  location,
-  status,
-  deadline,
-  description,
-}) => {
+const ProjectCard = ({ title, departments, location, status, deadline, description }) => {
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
       case "in progress":
@@ -35,11 +27,7 @@ const ProjectCard = ({
     <div className="bg-white rounded-lg shadow p-4 mb-4">
       <div className="flex justify-between items-start mb-2">
         <h3 className="text-lg font-semibold">{title}</h3>
-        <span
-          className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
-            status
-          )}`}
-        >
+        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(status)}`}>
           {status}
         </span>
       </div>
@@ -67,9 +55,16 @@ const ProjectCard = ({
 };
 
 const ProjectsOverview = () => {
+  const [projects, setProjects] = useState([]);
   const [filter, setFilter] = useState("all");
-  const [showDiscussionForum, setShowDiscussionForum] = useState(false); // State to manage Discussion Forum visibility
+  const [showDiscussionForum, setShowDiscussionForum] = useState(false);
 
+  useEffect(() => {
+    axios
+      .get("http://localhost:8081/show/projects")
+      .then((response) => setProjects(response.data))
+      .catch((error) => console.error("Error fetching projects:", error));
+  }, []);
 
   const filteredProjects =
     filter === "all"
@@ -79,7 +74,7 @@ const ProjectsOverview = () => {
   return (
     <div className="mt-8">
       {showDiscussionForum ? (
-        <DiscussionForum /> // Render the DiscussionForum component
+        <DiscussionForum /> // Render DiscussionForum component
       ) : (
         <>
           <div className="flex justify-between items-center mb-4">
@@ -101,14 +96,16 @@ const ProjectsOverview = () => {
             </div>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {filteredProjects.map((project, index) => (
-              <ProjectCard key={index} {...project} />
-            ))}
+            {filteredProjects.length > 0 ? (
+              filteredProjects.map((project, index) => <ProjectCard key={index} {...project} />)
+            ) : (
+              <p className="text-gray-500 text-center col-span-2">No projects found.</p>
+            )}
           </div>
           <div className="mt-4 flex justify-end">
             <button
               className="bg-blue-500 text-white px-4 py-2 rounded flex items-center hover:bg-blue-600 transition-colors"
-              onClick={() => setShowDiscussionForum(true)} // Set state to show Discussion Forum
+              onClick={() => setShowDiscussionForum(true)}
             >
               <MessageSquare size={16} className="mr-2" />
               Open Discussion Forum

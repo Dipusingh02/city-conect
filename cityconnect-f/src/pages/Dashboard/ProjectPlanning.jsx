@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
   Briefcase,
   Search,
@@ -7,40 +8,40 @@ import {
   Calendar,
   Users,
   MapPin,
+  XCircle,
 } from "lucide-react";
 
-const ProjectCard = ({
-  title,
-  description,
-  startDate,
-  endDate,
-  departments,
-  location,
-  phase,
-}) => {
+const ProjectCard = ({ title, description, startDate, deadline, departments, location, status }) => {
+  
+  const getStatusColor = (status) => {
+    switch (status.toLowerCase()) {
+      case "in progress":
+        return "bg-blue-100 text-blue-800";
+      case "completed":
+        return "bg-green-100 text-green-800";
+      case "delayed":
+        return "bg-yellow-100 text-yellow-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
   return (
     <div className="bg-white rounded-lg shadow p-4 mb-4">
       <div className="flex justify-between items-start mb-2">
         <h3 className="text-lg font-semibold">{title}</h3>
         <span
-          className={`px-2 py-1 rounded-full text-xs font-medium ${
-            phase === "Planning"
-              ? "bg-yellow-100 text-yellow-800"
-              : phase === "Execution"
-              ? "bg-blue-100 text-blue-800"
-              : phase === "Completed"
-              ? "bg-green-100 text-green-800"
-              : "bg-gray-100 text-gray-800"
-          }`}
-        >
-          {phase}
-        </span>
+        className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
+          status
+        )}`}
+      >
+        {status}
+      </span>
       </div>
       <p className="text-sm text-gray-600 mb-2">{description}</p>
       <div className="flex items-center text-sm text-gray-500 mb-2">
         <Calendar size={16} className="mr-1" />
         <span className="mr-4">
-          {startDate} - {endDate}
+          {startDate} - {deadline}
         </span>
       </div>
       <div className="flex items-center text-sm text-gray-500 mb-2">
@@ -58,58 +59,59 @@ const ProjectCard = ({
 const ProjectPlanning = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("All");
+  const [projects, setProjects] = useState([]);
+  const [showForm, setShowForm] = useState(false);
+  const [newProject, setNewProject] = useState({
+    title: "",
+    description: "",
+    startDate: "",
+    deadline: "",
+    departments: "",
+    location: "",
+    status: "Planning",
+    budget: "",
+    leadDepartment: "",
+  });
 
-  const projects = [
-    {
-      title: "Smart City Infrastructure Upgrade",
-      description:
-        "Implementing IoT sensors and 5G network across the city for improved data collection and connectivity.",
-      startDate: "2024-09-01",
-      endDate: "2025-08-31",
-      departments: ["IT", "Urban Planning", "Public Works"],
-      location: "City-wide",
-      phase: "Planning",
-    },
-    {
-      title: "Green Energy Initiative",
-      description:
-        "Installing solar panels on government buildings and creating community solar farms.",
-      startDate: "2024-10-15",
-      endDate: "2025-04-30",
-      departments: ["Environment", "Energy", "Urban Planning"],
-      location: "Multiple locations",
-      phase: "Execution",
-    },
-    {
-      title: "Public Transportation Revamp",
-      description:
-        "Introducing electric buses and optimizing routes based on AI-driven demand prediction.",
-      startDate: "2024-11-01",
-      endDate: "2025-10-31",
-      departments: ["Transport", "Environment", "IT"],
-      location: "City-wide",
-      phase: "Planning",
-    },
-    {
-      title: "Urban Greenspace Expansion",
-      description:
-        "Creating new parks and green corridors to improve air quality and provide recreational spaces.",
-      startDate: "2024-08-01",
-      endDate: "2025-07-31",
-      departments: ["Urban Planning", "Environment", "Parks & Recreation"],
-      location: "Various city districts",
-      phase: "Execution",
-    },
-  ];
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    axios.get("http://localhost:8081/show/projects")
+      .then((response) => setProjects(response.data))
+      .catch((error) => console.error("Error fetching projects:", error));
+  }, []);
+
+  const handleCreateProject = async (e) => {
+    e.preventDefault();
+    const formattedProject = {
+      ...newProject,
+      departments: newProject.departments.split(",").map((d) => d.trim()),
+      budget: Number(newProject.budget),
+    };
+
+    console.log("Submitting Project:", formattedProject);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8081/add/projects",
+        formattedProject,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      setProjects([...projects, response.data.project]);
+      setShowForm(false);
+    } catch (error) {
+      console.error("Error creating project:", error.response?.data || error.message);
+    }
+  };
 
   const filteredProjects = projects.filter(
     (project) =>
-      (filter === "All" || project.phase === filter) &&
+      (filter === "All" || project.status === filter) &&
       (project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        project.departments
-          .join(" ")
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase()))
+        project.departments.join(" ").toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   return (
@@ -119,35 +121,24 @@ const ProjectPlanning = () => {
         Project Planning
       </h2>
       <div className="mb-4 flex flex-wrap items-center gap-4">
-        <div className="relative flex-1 max-w-xs">
-          <input
-            type="text"
-            placeholder="Search projects..."
-            className="pl-10 pr-4 py-2 border rounded-lg w-full"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <Search
-            size={20}
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-          />
-        </div>
-        <div className="relative flex-1 max-w-xs">
-          <select
-            className="pl-10 pr-4 py-2 border rounded-lg appearance-none w-full"
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-          >
-            <option>All</option>
-            <option>Planning</option>
-            <option>Execution</option>
-            <option>Completed</option>
-          </select>
-          <Filter
-            size={20}
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-          />
-        </div>
+        <input
+          type="text"
+          placeholder="Search projects..."
+          className="border p-2 rounded-lg w-full max-w-xs"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <select
+          className="border p-2 rounded-lg w-full max-w-xs"
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+        >
+          <option>All</option>
+          <option>Planning</option>
+          <option>In Progress</option>
+          <option>Delayed</option>
+          <option>Completed</option>
+        </select>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {filteredProjects.map((project, index) => (
@@ -155,11 +146,38 @@ const ProjectPlanning = () => {
         ))}
       </div>
       <div className="mt-4 flex justify-end">
-        <button className="bg-blue-500 text-white px-4 py-2 rounded flex items-center hover:bg-blue-600 transition-colors">
+        <button onClick={() => setShowForm(true)} className="bg-blue-500 text-white px-4 py-2 rounded flex items-center hover:bg-blue-600 transition">
           <PlusCircle size={16} className="mr-2" />
           Create New Project
         </button>
       </div>
+      {showForm && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 p-4">
+        <div className="bg-white p-6 rounded-lg w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-lg my-10">
+            <div className="flex justify-between mb-4">
+              <h3 className="text-lg font-bold">Create New Project</h3>
+              <XCircle size={24} className="cursor-pointer" onClick={() => setShowForm(false)} />
+            </div>
+            <form onSubmit={handleCreateProject} className="grid gap-4">
+              <input type="text" placeholder="Title" className="border p-2 rounded" onChange={(e) => setNewProject({ ...newProject, title: e.target.value })} required />
+              <textarea placeholder="Description" className="border p-2 rounded" onChange={(e) => setNewProject({ ...newProject, description: e.target.value })} required />
+              <input type="date" className="border p-2 rounded" onChange={(e) => setNewProject({ ...newProject, startDate: e.target.value })} required />
+              <input type="date" className="border p-2 rounded" onChange={(e) => setNewProject({ ...newProject, deadline: e.target.value })} required />
+              <input type="text" placeholder="Departments (comma separated)" className="border p-2 rounded" onChange={(e) => setNewProject({ ...newProject, departments: e.target.value })} required />
+              <input type="text" placeholder="Lead Department" className="border p-2 rounded" onChange={(e) => setNewProject({ ...newProject, leadDepartment: e.target.value })} required />
+              <input type="text" placeholder="Location" className="border p-2 rounded" onChange={(e) => setNewProject({ ...newProject, location: e.target.value })} required />
+              <select className="border p-2 rounded" onChange={(e) => setNewProject({ ...newProject, status: e.target.value })} required>
+                <option value="Planning">Planning</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Delayed">Delayed</option>
+                <option value="Completed">Completed</option>
+              </select>
+              <input type="number" placeholder="Budget" className="border p-2 rounded" onChange={(e) => setNewProject({ ...newProject, budget: Number(e.target.value) })} required />
+              <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-green-600 transition">Submit</button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

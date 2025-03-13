@@ -28,13 +28,13 @@ const SidebarNavigation = ({ setActiveComponent }) => {
   ];
 
   return (
-    <Disclosure as="nav" className="bg-gray-800 sm:w-64">
+    <Disclosure as="nav" className="bg-blue-800 sm:w-64">
       {({ open }) => (
         <>
           {/* Mobile Menu Button */}
           <div className="sm:hidden">
             <Disclosure.Button
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white transition-all duration-300"
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white transition-all duration-300"
             >
               <span className="sr-only">Open main menu</span>
               {open ? (
@@ -51,10 +51,10 @@ const SidebarNavigation = ({ setActiveComponent }) => {
               {navItems.map((item) => (
                 <button
                   key={item.name}
-                  className="flex items-center text-gray-300 hover:bg-gray-700 hover:text-white px-4 py-3 rounded-md text-lg font-semibold w-full text-left transition-all duration-200 ease-in-out"
+                  className="flex items-center text-gray-300 hover:bg-blue-700 hover:text-white px-4 py-3 rounded-md text-lg font-semibold w-full text-left transition-all duration-200 ease-in-out"
                   onClick={() => setActiveComponent(item.component)}
                 >
-                  <item.icon className="mr-3 h-5 w-5 text-gray-400" aria-hidden="true" />
+                  <item.icon className="mr-3 h-5 w-5 text-blue-200" aria-hidden="true" />
                   {item.name}
                 </button>
               ))}

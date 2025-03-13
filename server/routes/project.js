@@ -3,8 +3,7 @@ const Project = require("../models/project");
 const authenticateToken = require("../middleware/authenticateToken");
 
 const router = express.Router();
-
-router.post("/projects", authenticateToken, async (req, res) => {
+router.post("/add/projects", authenticateToken, async (req, res) => {
     try {
         let {
             title,
@@ -21,8 +20,6 @@ router.post("/projects", authenticateToken, async (req, res) => {
         if (typeof departments === 'string') {
             departments = departments.split(',').map(dept => dept.trim());
         }
-
-      
         if (!title) return res.status(400).json({ message: "Project name is required." });
         if (!description) return res.status(400).json({ message: "Project description is required." });
         if (!location) return res.status(400).json({ message: "Project location is required." });
@@ -39,7 +36,6 @@ router.post("/projects", authenticateToken, async (req, res) => {
         if (isNaN(parsedDeadline.getTime())) {
             return res.status(400).json({ message: "Invalid deadline format. Please provide a valid date." });
         }
-
         const newProject = new Project({
             workerId: req.user.userId, 
             title,
@@ -60,7 +56,7 @@ router.post("/projects", authenticateToken, async (req, res) => {
     }
 });
 
-router.get("/projects", async (req, res) => {
+router.get("/show/projects", async (req, res) => {
     try {
         const projects = await Project.find().populate('workerId', 'name email');
         res.json(projects);

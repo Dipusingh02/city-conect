@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import { PlusCircle } from 'lucide-react';
 
 const CreateProject = () => {
@@ -11,35 +12,50 @@ const CreateProject = () => {
   const [deadline, setDeadline] = useState('');
   const [budget, setBudget] = useState('');
   const [leadDepartment, setLeadDepartment] = useState('');
+  const [projects, setProjects] = useState([]); // Added missing state for projects
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+  
     const newProject = {
       title: projectName,
       description: projectDescription,
-      departments: departments.split(',').map((d) => d.trim()), // Splitting by comma for multiple departments
+      departments: departments.split(',').map((d) => d.trim()),
       location,
       status,
       startDate,
       deadline,
-      budget: Number(budget), // Converting budget to a number
+      budget: Number(budget),
       leadDepartment,
     };
-
-    // Here you would typically send the data to your backend
-    console.log('Project created:', newProject);
-
-    // Reset form
-    setProjectName('');
-    setProjectDescription('');
-    setDepartments('');
-    setLocation('');
-    setStatus('');
-    setStartDate('');
-    setDeadline('');
-    setBudget('');
-    setLeadDepartment('');
+  
+    try {
+      const token = localStorage.getItem("token"); // Ensure the token is stored and retrieved correctly
+  
+      const response = await axios.post("http://localhost:8081/add/projects", newProject, {
+        headers: {
+          Authorization: `Bearer ${token}`, // Attach token
+        },
+      });
+  
+      setProjects([...projects, response.data.project]);
+      console.log('Project created:', response.data.project);
+  
+      // Reset form after successful submission
+      setProjectName('');
+      setProjectDescription('');
+      setDepartments('');
+      setLocation('');
+      setStatus('');
+      setStartDate('');
+      setDeadline('');
+      setBudget('');
+      setLeadDepartment('');
+    } catch (error) {
+      console.error("Error creating project:", error.response?.data || error.message);
+    }
   };
+  
 
   return (
     <div className="max-w-md mx-auto mt-10">

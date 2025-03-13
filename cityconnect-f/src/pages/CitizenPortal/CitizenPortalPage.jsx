@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import ProjectsPage from "../ProjectsPage/ProjectsPage";
 import IssueReportingPage from "../IssueReporting/IssueReportingPage";
 import { Tab } from "@headlessui/react";
+import Navbar from "../Home/Navbar";
 
 const CitizenPortalPage = () => {
   const [selectedTab, setSelectedTab] = useState(0); // Change initial state to 1
 
   return (
+    <div><Navbar/>
     <div className="container mx-auto px-4 py-12 bg-gray-50 min-h-screen">
       <div className="bg-white rounded-lg shadow-lg p-8">
         <h1 className="text-5xl font-bold mb-4 text-gray-800 text-center">
@@ -56,7 +58,7 @@ const CitizenPortalPage = () => {
           </Tab.Panels>
         </Tab.Group>
       </div>
-    </div>
+    </div></div>
   );
 };
 

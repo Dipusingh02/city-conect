@@ -83,4 +83,24 @@ router.post("/worker/login", async (req, res) => {
         res.status(403).json({ message: "Invalid email or password", error: error.message });
     }
 });
+
+// Get All Users
+router.get("/users", authenticateToken, async (req, res) => {
+    try {
+        const users = await Worker.find();
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching users", error });
+    }
+});
+
+// Delete User
+router.delete("/users/:id", authenticateToken, async (req, res) => {
+    try {
+        await Worker.findByIdAndDelete(req.params.id);
+        res.json({ message: "User deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "Error deleting user", error });
+    }
+});
 module.exports = router;

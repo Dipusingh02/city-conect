@@ -1,6 +1,7 @@
 import React from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import { Link, useNavigate } from "react-router-dom";
 import FeatureHighlights from './FeatureHighlights';
 import RecentProjects from './RecentProjects';
 
@@ -16,8 +17,8 @@ const HomePage = () => {
           <p className="mt-4 text-lg text-gray-600">
             Streamline urban projects with ease and efficiency.
           </p>
-          <button className="mt-8 px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
-            Get Started
+          <button className="mt-8 px-6 py-3 bg-blue-500 text-white rounded-lg cursor-pointer hover:bg-blue-600">
+         <Link to={"/login"}> Get Started</Link>
           </button>
         </div>
       </header>

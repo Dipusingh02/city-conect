@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { Users, Search, Filter, UserPlus, Edit, Trash2 } from "lucide-react";
 
-const UserCard = ({ name, department, role, email }) => {
+const UserCard = ({ name, department, role, email, onDelete }) => {
   return (
     <div className="bg-white rounded-lg shadow p-4 mb-4">
       <div className="flex justify-between items-start mb-2">
@@ -26,44 +27,45 @@ const UserCard = ({ name, department, role, email }) => {
         <button className="text-blue-500 hover:text-blue-700">
           <Edit size={16} />
         </button>
-        <button className="text-red-500 hover:text-red-700">
+        <button className="text-red-500 hover:text-red-700" onClick={onDelete}>
           <Trash2 size={16} />
         </button>
       </div>
     </div>
   );
 };
-
 const UserManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("All");
+  const [users, setUsers] = useState([]);
 
-  const users = [
-    {
-      name: "John Doe",
-      department: "IT",
-      role: "Admin",
-      email: "john.doe@citygovt.com",
-    },
-    {
-      name: "Jane Smith",
-      department: "Urban Planning",
-      role: "Manager",
-      email: "jane.smith@citygovt.com",
-    },
-    {
-      name: "Mike Johnson",
-      department: "Transport",
-      role: "Employee",
-      email: "mike.johnson@citygovt.com",
-    },
-    {
-      name: "Sarah Lee",
-      department: "Environment",
-      role: "Manager",
-      email: "sarah.lee@citygovt.com",
-    },
-  ];
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const token = localStorage.getItem("token"); // Get token from local storage
+      if (!token) {
+        console.error("No token found, please login first.");
+        return;
+      }
+  
+      try {
+        const response = await axios.get("http://localhost:8081/users", {
+          headers: { Authorization: `Bearer ${token}` }, // Send token in headers
+        });
+        setUsers(response.data);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+  
+    fetchUsers();
+  }, []);
+  
+
+  const handleDelete = (userId) => {
+    axios.delete(`http://localhost:8081/users/${userId}`)
+      .then(() => setUsers(users.filter(user => user._id !== userId)))
+      .catch(error => console.error("Error deleting user:", error));
+  };
 
   const filteredUsers = users.filter(
     (user) =>
@@ -111,8 +113,8 @@ const UserManagement = () => {
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredUsers.map((user, index) => (
-          <UserCard key={index} {...user} />
+        {filteredUsers.map((user) => (
+          <UserCard key={user._id} {...user} onDelete={() => handleDelete(user._id)} />
         ))}
       </div>
       <div className="mt-4 flex justify-end">
