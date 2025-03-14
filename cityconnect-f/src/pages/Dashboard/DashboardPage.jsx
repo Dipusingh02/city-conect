@@ -10,6 +10,7 @@ import DiscussionForum from "./DiscussionForum";
 import UserManagement from "./UserManagement";
 import ProjectPlanning from "./ProjectPlanning";
 import CreateProject from "./CreateProject";
+import "../../App.css";
 
 const DashboardPage = () => {
   const [activeComponent, setActiveComponent] = useState('CityData');
@@ -43,8 +44,11 @@ const DashboardPage = () => {
     <div className="flex flex-col h-screen">
       <DashboardHeader />
       <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar (Scrollable) */}
         <SidebarNavigation setActiveComponent={setActiveComponent} />
-        <main className="flex-1 p-4 sm:p-6 bg-gray-100 overflow-y-auto">
+
+        {/* Main Content (Scrollable) */}
+        <main className="flex-1 p-4 sm:p-6 bg-gradient-to-r from-blue-100 to-purple-100 overflow-y-auto h-full custom-scrollbar">
           {renderComponent()}
         </main>
       </div>

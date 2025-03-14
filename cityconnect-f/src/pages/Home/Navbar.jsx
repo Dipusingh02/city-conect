@@ -15,94 +15,47 @@ const Navbar = () => {
     }
   }, []);
 
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
-
-  const handleLoginClick = () => {
-    navigate("/login");
-  };
-
+  const toggleMenu = () => setIsOpen(!isOpen);
+  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
+  const handleLoginClick = () => navigate("/login");
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("name");
-    localStorage.removeItem("employeeId");
+    localStorage.clear();
     setLoggedInUser(null);
     navigate("/login");
   };
 
   return (
-    <nav className="bg-white shadow-md">
+    <nav className="bg-blue-900 shadow-lg text-white">
       <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-        <div className="flex-none">
-          <h1 className="text-2xl font-bold text-gray-800">CityConnect</h1>
+        <h1 className="text-2xl font-bold">CityConnect</h1>
+
+        <div className="hidden md:flex space-x-6">
+          <Link to="/" className="hover:text-blue-300 transition">Home</Link>
+          <Link to="/citizen-portal" className="hover:text-blue-300 transition">Citizen Portal</Link>
         </div>
 
-        <div className="flex-1 text-center">
-          <Link to="/" className="text-gray-600 hover:text-blue-500 py-2 px-4">
-            Home
-          </Link>
-        </div>
-
-    
-        <div className="flex-none flex items-center space-x-6">
-          <Link
-            to="/citizen-portal"
-            className="text-gray-600 hover:text-blue-500 py-2 px-4"
-          >
-            Citizen Portal
-          </Link>
-          <div className="flex items-center">
-            <button
-              className="block lg:hidden text-gray-600 hover:text-blue-500 mr-4"
-              onClick={toggleMenu}
-            >
-              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
-            {loggedInUser ? (
-              <div className="relative">
-                <button
-                  className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 flex items-center"
-                  onClick={toggleDropdown}
-                >
-                  {loggedInUser}
-                  <ChevronDown className="ml-2 h-5 w-5" />
-                </button>
-                {isDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg py-2">
-                    <button
-                      className="block w-full text-left px-4 py-2 text-gray-600 hover:bg-gray-100 hover:text-blue-500"
-                      onClick={handleLogout}
-                    >
-                      Logout
-                    </button>
-                    <Link
-                      to="/dashboard"
-                      className="block w-full text-left px-4 py-2 text-gray-600 hover:bg-gray-100 hover:text-blue-500"
-                    >
-                      Dashboard
-                    </Link>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <button
-                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 flex items-center"
-                onClick={handleLoginClick}
-              >
-                <LogIn className="h-5 w-5 mr-2" />
-                Login
+        <div className="flex items-center space-x-6">
+          {loggedInUser ? (
+            <div className="relative z-50">
+              <button onClick={toggleDropdown} className="bg-blue-700 px-4 py-2 rounded-lg flex items-center hover:bg-blue-600">
+                {loggedInUser} <ChevronDown className="ml-2 h-5 w-5" />
               </button>
-            )}
-          </div>
+              {isDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-lg shadow-lg py-2">
+                  <Link to="/dashboard" className="block px-4 py-2 hover:bg-gray-200">Dashboard</Link>
+                  <button onClick={handleLogout} className="block w-full text-left px-4 py-2 hover:bg-gray-200">Logout</button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <button onClick={handleLoginClick} className="bg-blue-700 px-4 py-2 rounded-lg hover:bg-blue-600 flex items-center">
+              <LogIn className="h-5 w-5 mr-2" /> Login
+            </button>
+          )}
         </div>
       </div>
     </nav>
   );
 };
+
 export default Navbar;

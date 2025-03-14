@@ -10,7 +10,7 @@ import {
   MapPin,
   XCircle,
 } from "lucide-react";
-
+import "../../App.css";
 const ProjectCard = ({ title, description, startDate, deadline, departments, location, status }) => {
   
   const getStatusColor = (status) => {
@@ -152,7 +152,7 @@ const ProjectPlanning = () => {
         </button>
       </div>
       {showForm && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 p-4">
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 p-4 ">
         <div className="bg-white p-6 rounded-lg w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-lg my-10">
             <div className="flex justify-between mb-4">
               <h3 className="text-lg font-bold">Create New Project</h3>

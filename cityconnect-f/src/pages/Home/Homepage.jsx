@@ -1,25 +1,33 @@
-import React from 'react';
-import Navbar from './Navbar';
-import Footer from './Footer';
-import { Link, useNavigate } from "react-router-dom";
-import FeatureHighlights from './FeatureHighlights';
-import RecentProjects from './RecentProjects';
+import React from "react";
+import Navbar from "./Navbar";
+import Footer from "./Footer";
+import { Link } from "react-router-dom";
+import FeatureHighlights from "./FeatureHighlights";
+import RecentProjects from "./RecentProjects";
+import img from "../../assets/headerimg.jpg";
 
 const HomePage = () => {
   return (
-    <div className="w-full">
+    <div className="w-full bg-gray-50">
       <Navbar />
-      <header className="bg-gray-100 py-20 w-full">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <h1 className="text-5xl font-bold text-gray-800">
+      <header
+        className="relative w-full min-h-[500px] md:h-[600px] flex items-center justify-center bg-cover bg-center"
+        style={{ backgroundImage: `url(${img})` }}
+      >
+        <div className="absolute inset-0 bg-black/50"></div>
+        <div className="relative text-center text-white px-6">
+          <h1 className="text-6xl font-extrabold drop-shadow-lg">
             Welcome to CityConnect
           </h1>
-          <p className="mt-4 text-lg text-gray-600">
+          <p className="mt-4 text-lg max-w-2xl mx-auto">
             Streamline urban projects with ease and efficiency.
           </p>
-          <button className="mt-8 px-6 py-3 bg-blue-500 text-white rounded-lg cursor-pointer hover:bg-blue-600">
-         <Link to={"/login"}> Get Started</Link>
-          </button>
+          <Link
+            to="/login"
+            className="mt-8 inline-block px-8 py-4 bg-blue-600 text-white text-lg font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-all"
+          >
+            Get Started
+          </Link>
         </div>
       </header>
       <FeatureHighlights />

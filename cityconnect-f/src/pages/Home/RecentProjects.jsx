@@ -22,16 +22,16 @@ const RecentProjects = () => {
   return (
     <section className="bg-gray-50 py-20">
       <div className="container mx-auto px-4 py-8">
-        <h2 className="text-3xl font-bold mb-10 text-gray-800">Recent Projects</h2>
+        <h2 className="text-4xl font-bold mb-12 text-gray-900">Recent Projects</h2>
         {/* If a project is selected, show the project detail component */}
         {selectedProject ? (
           <ViewProjectDetail project={selectedProject} onClose={handleCloseDetail} />
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             {recentProjects.map((project, index) => (
-              <div key={index} className="bg-white p-6 rounded-lg shadow-md transition-all hover:shadow-lg">
-                <h3 className="text-xl font-semibold text-blue-500 mb-4">{project.title}</h3>
-                <p className="text-gray-600 mb-6">{project.description}</p>
+              <div key={index} className="bg-white p-8 rounded-xl shadow-lg transform hover:scale-105 transition-transform">
+                <h3 className="text-2xl font-semibold text-blue-600 mb-4">{project.title}</h3>
+                <p className="text-gray-700 mb-6">{project.description}</p>
                 <button
                   onClick={() => handleLearnMore(project)}
                   className="text-blue-500 hover:text-blue-600 font-medium transition-colors"
