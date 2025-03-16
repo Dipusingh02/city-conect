@@ -1,10 +1,16 @@
 // IssueReportingForm.js
 
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState } from "react";
+import axios from "axios";
 
 const Alert = ({ variant, title, description }) => (
-  <div className={`p-3 sm:p-4 rounded-md ${variant === 'error' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
+  <div
+    className={`p-3 sm:p-4 rounded-md ${
+      variant === "error"
+        ? "bg-red-100 text-red-700"
+        : "bg-green-100 text-green-700"
+    }`}
+  >
     <h3 className="text-sm font-medium">{title}</h3>
     <div className="mt-2 text-sm">{description}</div>
   </div>
@@ -12,11 +18,11 @@ const Alert = ({ variant, title, description }) => (
 
 const IssueReportingForm = () => {
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    department: '',
-    location: '',
-    status: 'Pending',
+    title: "",
+    description: "",
+    department: "",
+    location: "",
+    status: "Pending",
     attachment: null,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -36,34 +42,34 @@ const IssueReportingForm = () => {
     setSubmitStatus(null);
 
     const formDataToSend = new FormData();
-    formDataToSend.append('title', formData.title);
-    formDataToSend.append('description', formData.description);
-    formDataToSend.append('department', formData.department);
-    formDataToSend.append('location', formData.location);
-    formDataToSend.append('status', formData.status);
+    formDataToSend.append("title", formData.title);
+    formDataToSend.append("description", formData.description);
+    formDataToSend.append("department", formData.department);
+    formDataToSend.append("location", formData.location);
+    formDataToSend.append("status", formData.status);
     if (formData.attachment) {
-      formDataToSend.append('attachment', formData.attachment);
+      formDataToSend.append("attachment", formData.attachment);
     }
 
     try {
       // Replace with your backend server URL
-      await axios.post('http://localhost:5000/api/issues', formDataToSend, {
+      await axios.post("http://localhost:8081/report/issues", formDataToSend, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
       });
-      setSubmitStatus('success');
+      setSubmitStatus("success");
       setFormData({
-        title: '',
-        description: '',
-        department: '',
-        location: '',
-        status: 'Pending',
+        title: "",
+        description: "",
+        department: "",
+        location: "",
+        status: "Pending",
         attachment: null,
       });
     } catch (error) {
-      console.error('Error submitting issue:', error);
-      setSubmitStatus('error');
+      console.error("Error submitting issue:", error);
+      setSubmitStatus("error");
     } finally {
       setIsSubmitting(false);
     }
@@ -74,7 +80,9 @@ const IssueReportingForm = () => {
       <h2 className="text-xl sm:text-2xl font-bold">Report an Issue</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Issue Title</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Issue Title
+          </label>
           <input
             type="text"
             name="title"
@@ -85,7 +93,9 @@ const IssueReportingForm = () => {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Description</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Description
+          </label>
           <textarea
             name="description"
             value={formData.description}
@@ -96,7 +106,9 @@ const IssueReportingForm = () => {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Department</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Department
+          </label>
           <input
             type="text"
             name="department"
@@ -107,7 +119,9 @@ const IssueReportingForm = () => {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Location</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Location
+          </label>
           <input
             type="text"
             name="location"
@@ -118,7 +132,9 @@ const IssueReportingForm = () => {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Attachment (optional)</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Attachment (optional)
+          </label>
           <input
             type="file"
             name="attachment"
@@ -131,21 +147,21 @@ const IssueReportingForm = () => {
           disabled={isSubmitting}
           className={`w-full px-4 py-2 text-white font-semibold rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 ${
             isSubmitting
-              ? 'bg-indigo-400 cursor-not-allowed'
-              : 'bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500'
+              ? "bg-indigo-400 cursor-not-allowed"
+              : "bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500"
           }`}
         >
-          {isSubmitting ? 'Submitting...' : 'Submit'}
+          {isSubmitting ? "Submitting..." : "Submit"}
         </button>
       </form>
-      {submitStatus === 'success' && (
+      {submitStatus === "success" && (
         <Alert
           variant="success"
           title="Success"
           description="Your issue has been successfully submitted."
         />
       )}
-      {submitStatus === 'error' && (
+      {submitStatus === "error" && (
         <Alert
           variant="error"
           title="Error"

@@ -23,7 +23,7 @@ const HomePage = () => {
             Streamline urban projects with ease and efficiency.
           </p>
           <Link
-            to="/login"
+            to="/citizen-portal"
             className="mt-8 inline-block px-8 py-4 bg-blue-600 text-white text-lg font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-all"
           >
             Get Started

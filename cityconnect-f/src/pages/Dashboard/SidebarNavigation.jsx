@@ -11,10 +11,11 @@ import {
   BarChart2,
   UserPlus,
   Clipboard,
-  Wrench
+  AlertTriangle,
+  Wrench,
 } from "lucide-react";
 
-const SidebarNavigation = ({ setActiveComponent }) => {
+const SidebarNavigation = ({ setActiveComponent, setSidebarOpen, sidebarOpen }) => {
   const navItems = [
     { name: "City Data", component: "CityData", icon: BarChart2 },
     { name: "Projects Overview", component: "ProjectsOverview", icon: FileText },
@@ -23,12 +24,13 @@ const SidebarNavigation = ({ setActiveComponent }) => {
     { name: "Scheduling Tool", component: "SchedulingTool", icon: Calendar },
     { name: "Capacity Building", component: "CapacityBuilding", icon: Users },
     { name: "Discussion Forum", component: "DiscussionForum", icon: MessageSquare },
-    { name: "User Management", component: "UserManagement", icon: UserPlus },
     { name: "Project Planning", component: "ProjectPlanning", icon: Home },
+    { name: "Issues Report", component: "IssuesReport", icon: AlertTriangle },
+    { name: "User Management", component: "UserManagement", icon: UserPlus },
   ];
 
   return (
-    <Disclosure as="nav" className="bg-blue-800 sm:w-64 h-screen">
+    <Disclosure as="nav" className="bg-blue-800 sm:w-64 min-h-full h-screen overflow-hidden">
       {({ open }) => (
         <>
           {/* Mobile Menu Button */}
@@ -39,13 +41,16 @@ const SidebarNavigation = ({ setActiveComponent }) => {
           </div>
 
           {/* Desktop Sidebar (Scrollable) */}
-          <div className="hidden sm:flex flex-col h-screen overflow-y-auto">
-            <div className="py-4">
+          <div className="hidden sm:flex flex-col h-full overflow-y-auto">
+            <div className="py-4 space-y-2">
               {navItems.map((item) => (
                 <button
                   key={item.name}
                   className="flex items-center text-gray-300 hover:bg-blue-700 hover:text-white px-4 py-3 rounded-md text-lg font-semibold w-full text-left transition"
-                  onClick={() => setActiveComponent(item.component)}
+                  onClick={() => {
+                    setActiveComponent(item.component);
+                    setSidebarOpen(false); // Close sidebar after selection
+                  }}
                 >
                   <item.icon className="mr-3 h-5 w-5 text-blue-200" />
                   {item.name}
@@ -62,7 +67,10 @@ const SidebarNavigation = ({ setActiveComponent }) => {
                   key={item.name}
                   as="button"
                   className="flex items-center text-gray-300 hover:bg-blue-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition"
-                  onClick={() => setActiveComponent(item.component)}
+                  onClick={() => {
+                    setActiveComponent(item.component);
+                    setSidebarOpen(false); // Close sidebar on item click
+                  }}
                 >
                   <item.icon className="mr-3 h-5 w-5 text-gray-400" />
                   {item.name}
@@ -75,5 +83,6 @@ const SidebarNavigation = ({ setActiveComponent }) => {
     </Disclosure>
   );
 };
+
 
 export default SidebarNavigation;

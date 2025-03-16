@@ -1,7 +1,6 @@
 const express = require("express");
 const Project = require("../models/project"); 
 const authenticateToken = require("../middleware/authenticateToken");
-
 const router = express.Router();
 router.post("/add/projects", authenticateToken, async (req, res) => {
     try {
@@ -64,5 +63,6 @@ router.get("/show/projects", async (req, res) => {
         res.status(500).json({ message: "Error retrieving projects", error: error.message });
     }
 });
+
 
 module.exports = router;

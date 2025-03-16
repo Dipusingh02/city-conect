@@ -4,6 +4,10 @@ const dotenv = require('dotenv');
 const cors = require('cors'); // Correctly require cors
 const authRoutes = require('./routes/auth'); // Correctly require your routes
 const projectRoutes =require('./routes/project');
+const taskRoutes = require('./routes/task');
+const issuesRoutes= require('./routes/issues')
+const postRoutes = require("./routes/post");
+
 const app = express();
 
 // Load environment variables from .env file
@@ -23,6 +27,9 @@ app.use(cors({
 
 app.use('/', authRoutes); // Use the routes
 app.use('/', projectRoutes);
+app.use('/', taskRoutes);
+app.use('/', issuesRoutes);
+app.use("/", postRoutes);
 
 // Get port and database connection string from environment variables
 const port = process.env.PORT || 5000;
