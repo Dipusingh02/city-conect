@@ -61,7 +61,7 @@ const ProjectsOverview = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8081/show/projects")
+      .get("https://city-conect.onrender.com/show/projects")
       .then((response) => setProjects(response.data))
       .catch((error) => console.error("Error fetching projects:", error));
   }, []);

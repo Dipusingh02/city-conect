@@ -54,7 +54,7 @@ const IssuesReport = () => {
   useEffect(() => {
     const fetchIssues = async () => {
       try {
-        const response = await axios.get("http://localhost:8081/citizen/issues");
+        const response = await axios.get("https://city-conect.onrender.com/citizen/issues");
         setIssues(response.data);
       } catch (err) {
         console.error("Error fetching issues:", err);

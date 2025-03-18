@@ -151,7 +151,7 @@ const SchedulingTool = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get("http://localhost:8081/show/tasks");
+      const response = await axios.get("https://city-conect.onrender.com/show/tasks");
       setTasks(response.data);
     } catch (error) {
       setError("Error fetching tasks");
@@ -167,7 +167,7 @@ const SchedulingTool = () => {
     setError(null);
     try {
       const response = await axios.post(
-        "http://localhost:8081/add/tasks",
+        "https://city-conect.onrender.com/add/tasks",
         {
           ...newTask,
           dependencies: newTask.dependencies.split(",").map(dep => dep.trim()),
@@ -201,7 +201,7 @@ const SchedulingTool = () => {
       const updatedTask = tasks.find(task => task._id === id);
       updatedTask.status = updatedTask.status === "Completed" ? "In Progress" : "Completed";
 
-      await axios.put(`http://localhost:8081/update/task/${id}`, { status: updatedTask.status }, {
+      await axios.put(`https://city-conect.onrender.com/update/task/${id}`, { status: updatedTask.status }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchTasks();

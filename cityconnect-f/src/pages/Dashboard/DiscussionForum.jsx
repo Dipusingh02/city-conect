@@ -106,13 +106,13 @@ const DiscussionForum = () => {
   const { loggedInUser } = useAuth();
 
   useEffect(() => {
-    fetch("http://localhost:8081/get/post")
+    fetch("https://city-conect.onrender.com/get/post")
       .then((res) => res.json())
       .then((data) => setPosts(data));
   }, []);
 
   const handleReply = (postId, replyText) => {
-    fetch(`http://localhost:8081/${postId}/reply`, {
+    fetch(`https://city-conect.onrender.com/${postId}/reply`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -141,7 +141,7 @@ const DiscussionForum = () => {
   
 
   const handleDeleteReply = (postId, replyId) => {
-    fetch(`http://localhost:8081/${postId}/reply/${replyId}`, {
+    fetch(`https://city-conect.onrender.com/${postId}/reply/${replyId}`, {
       method: "DELETE",
     })
       .then((res) => res.json())
@@ -155,7 +155,7 @@ const DiscussionForum = () => {
   };
 
   const handleCreatePost = () => {
-    fetch("http://localhost:8081/create", {
+    fetch("https://city-conect.onrender.com/create", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...newPost, author: loggedInUser }),

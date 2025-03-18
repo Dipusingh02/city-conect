@@ -48,7 +48,7 @@ const UserManagement = () => {
       }
   
       try {
-        const response = await axios.get("http://localhost:8081/users", {
+        const response = await axios.get("https://city-conect.onrender.com/users", {
           headers: { Authorization: `Bearer ${token}` }, // Send token in headers
         });
         setUsers(response.data);
@@ -62,7 +62,7 @@ const UserManagement = () => {
   
 
   const handleDelete = (userId) => {
-    axios.delete(`http://localhost:8081/users/${userId}`)
+    axios.delete(`https://city-conect.onrender.com/users/${userId}`)
       .then(() => setUsers(users.filter(user => user._id !== userId)))
       .catch(error => console.error("Error deleting user:", error));
   };

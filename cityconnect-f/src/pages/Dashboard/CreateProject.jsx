@@ -32,7 +32,7 @@ const CreateProject = () => {
     try {
       const token = localStorage.getItem("token"); // Ensure the token is stored and retrieved correctly
   
-      const response = await axios.post("http://localhost:8081/add/projects", newProject, {
+      const response = await axios.post("https://city-conect.onrender.com/add/projects", newProject, {
         headers: {
           Authorization: `Bearer ${token}`, // Attach token
         },

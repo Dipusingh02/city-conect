@@ -18,7 +18,7 @@ app.use('/uploads', express.static('uploads'));
 // Middleware setup
 app.use(express.json());
 app.use(cors({
-    origin: 'http://localhost:5173', 
+    origin: ['http://localhost:5173', 'https://cityconnect-dipu.netlify.app'],
     methods: ['GET', 'POST','DELETE','PUT','PATCH'],
     credentials: true
 }));

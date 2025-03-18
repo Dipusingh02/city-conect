@@ -76,7 +76,7 @@ const ProjectPlanning = () => {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    axios.get("http://localhost:8081/show/projects")
+    axios.get("https://city-conect.onrender.com/show/projects")
       .then((response) => setProjects(response.data))
       .catch((error) => console.error("Error fetching projects:", error));
   }, []);
@@ -93,7 +93,7 @@ const ProjectPlanning = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8081/add/projects",
+        "https://city-conect.onrender.com/add/projects",
         formattedProject,
         {
           headers: { Authorization: `Bearer ${token}` },
