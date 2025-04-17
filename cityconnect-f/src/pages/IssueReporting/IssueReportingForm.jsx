@@ -1,6 +1,4 @@
-// IssueReportingForm.js
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 const Alert = ({ variant, title, description }) => (
@@ -24,14 +22,28 @@ const IssueReportingForm = () => {
     location: "",
     status: "Pending",
     attachment: null,
+    projectId: "none",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
+  const [projects, setProjects] = useState([]);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const res = await axios.get("http://localhost:8081/projects/list");
+        setProjects(res.data);
+      } catch (err) {
+        console.error("Failed to fetch projects", err);
+      }
+    };
+    fetchProjects();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
+    setFormData((prev) => ({
+      ...prev,
       [name]: files ? files[0] : value,
     }));
   };
@@ -42,21 +54,17 @@ const IssueReportingForm = () => {
     setSubmitStatus(null);
 
     const formDataToSend = new FormData();
-    formDataToSend.append("title", formData.title);
-    formDataToSend.append("description", formData.description);
-    formDataToSend.append("department", formData.department);
-    formDataToSend.append("location", formData.location);
-    formDataToSend.append("status", formData.status);
-    if (formData.attachment) {
-      formDataToSend.append("attachment", formData.attachment);
-    }
+    Object.entries(formData).forEach(([key, val]) => {
+      if (key === "attachment" && val) {
+        formDataToSend.append("attachment", val);
+      } else {
+        formDataToSend.append(key, val);
+      }
+    });
 
     try {
-      // Replace with your backend server URL
-      await axios.post("https://city-conect.onrender.com/report/issues", formDataToSend, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      await axios.post("http://localhost:8081/report/issues", formDataToSend, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
       setSubmitStatus("success");
       setFormData({
@@ -66,6 +74,7 @@ const IssueReportingForm = () => {
         location: "",
         status: "Pending",
         attachment: null,
+        projectId: "none",
       });
     } catch (error) {
       console.error("Error submitting issue:", error);
@@ -80,75 +89,81 @@ const IssueReportingForm = () => {
       <h2 className="text-xl sm:text-2xl font-bold">Report an Issue</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Issue Title
-          </label>
+          <label className="block text-sm font-medium text-gray-700">Issue Title</label>
           <input
             type="text"
             name="title"
             value={formData.title}
             onChange={handleChange}
             required
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className={input}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Description
-          </label>
+          <label className="block text-sm font-medium text-gray-700">Description</label>
           <textarea
             name="description"
             value={formData.description}
             onChange={handleChange}
             required
             rows="4"
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className={input}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Department
-          </label>
+          <label className="block text-sm font-medium text-gray-700">Department</label>
           <input
             type="text"
             name="department"
             value={formData.department}
             onChange={handleChange}
             required
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className={input}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Location
-          </label>
+          <label className="block text-sm font-medium text-gray-700">Location</label>
           <input
             type="text"
             name="location"
             value={formData.location}
             onChange={handleChange}
             required
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className={input}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Attachment (optional)
-          </label>
+          <label className="block text-sm font-medium text-gray-700">Related Project</label>
+          <select
+            name="projectId"
+            value={formData.projectId}
+            onChange={handleChange}
+            className={input}
+          >
+            <option value="none">None</option>
+            {projects.map((project) => (
+              <option key={project._id} value={project._id}>
+                {project.title}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Attachment (optional)</label>
           <input
             type="file"
             name="attachment"
             onChange={handleChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className={input}
           />
         </div>
         <button
           type="submit"
           disabled={isSubmitting}
-          className={`w-full px-4 py-2 text-white font-semibold rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+          className={`w-full px-4 py-2 text-white font-semibold rounded-md shadow-sm ${
             isSubmitting
               ? "bg-indigo-400 cursor-not-allowed"
-              : "bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500"
+              : "bg-indigo-600 hover:bg-indigo-700"
           }`}
         >
           {isSubmitting ? "Submitting..." : "Submit"}
@@ -173,3 +188,6 @@ const IssueReportingForm = () => {
 };
 
 export default IssueReportingForm;
+
+// Tailwind class for input reuse
+const input = `mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`;

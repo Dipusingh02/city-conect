@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import {
   Calendar,
   Users,
@@ -7,9 +8,11 @@ import {
   AlertCircle,
   MessageSquare,
 } from "lucide-react";
-import DiscussionForum from "./DiscussionForum"; // Import the DiscussionForum component
+import DiscussionForum from "./DiscussionForum";
 
-const ProjectCard = ({ title, departments, location, status, deadline, description }) => {
+const ProjectCard = ({ id, title, departments, location, status, deadline, description }) => {
+  const navigate = useNavigate();
+  
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
       case "in progress":
@@ -23,8 +26,15 @@ const ProjectCard = ({ title, departments, location, status, deadline, descripti
     }
   };
 
+  const handleCardClick = () => {
+    navigate(`/projects/${id}`);
+  };
+
   return (
-    <div className="bg-white rounded-lg shadow p-4 mb-4">
+    <div 
+      className="bg-white rounded-lg shadow p-4 mb-4 cursor-pointer hover:shadow-md transition-shadow"
+      onClick={handleCardClick}
+    >
       <div className="flex justify-between items-start mb-2">
         <h3 className="text-lg font-semibold">{title}</h3>
         <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(status)}`}>
@@ -61,7 +71,7 @@ const ProjectsOverview = () => {
 
   useEffect(() => {
     axios
-      .get("https://city-conect.onrender.com/show/projects")
+      .get("http://localhost:8081/show/projects")
       .then((response) => setProjects(response.data))
       .catch((error) => console.error("Error fetching projects:", error));
   }, []);
@@ -74,7 +84,7 @@ const ProjectsOverview = () => {
   return (
     <div className="mt-8">
       {showDiscussionForum ? (
-        <DiscussionForum /> // Render DiscussionForum component
+        <DiscussionForum />
       ) : (
         <>
           <div className="flex justify-between items-center mb-4">
@@ -97,7 +107,18 @@ const ProjectsOverview = () => {
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {filteredProjects.length > 0 ? (
-              filteredProjects.map((project, index) => <ProjectCard key={index} {...project} />)
+              filteredProjects.map((project, index) => (
+                <ProjectCard 
+                  key={index} 
+                  id={project._id} 
+                  title={project.title}
+                  departments={project.departments}
+                  location={project.location}
+                  status={project.status}
+                  deadline={project.deadline}
+                  description={project.description}
+                />
+              ))
             ) : (
               <p className="text-gray-500 text-center col-span-2">No projects found.</p>
             )}
