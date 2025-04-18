@@ -88,5 +88,61 @@ router.get("/citizen/issues/by-project/:projectId", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+// PUT: Update issue status
+router.put("/issues/:issueId/status", async (req, res) => {
+  try {
+    const { issueId } = req.params;
+    const { status } = req.body;
+    
+    if (!["Pending", "In Progress", "Resolved", "Rejected"].includes(status)) {
+      return res.status(400).json({ error: "Invalid status value" });
+    }
+    
+    const updatedIssue = await Issue.findByIdAndUpdate(
+      issueId, 
+      { status }, 
+      { new: true }
+    );
+    
+    if (!updatedIssue) {
+      return res.status(404).json({ error: "Issue not found" });
+    }
+    
+    res.status(200).json(updatedIssue);
+  } catch (error) {
+    console.error("Error updating issue status:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 
+// POST: Add comment to an issue
+router.post("/issues/:issueId/comments", async (req, res) => {
+  try {
+    const { issueId } = req.params;
+    const { user, comment } = req.body;
+    
+    if (!user || !comment) {
+      return res.status(400).json({ error: "User and comment are required" });
+    }
+    
+    const issue = await Issue.findById(issueId);
+    
+    if (!issue) {
+      return res.status(404).json({ error: "Issue not found" });
+    }
+    
+    issue.publicFeedback.push({
+      user,
+      comment,
+      date: new Date()
+    });
+    
+    const updatedIssue = await issue.save();
+    
+    res.status(201).json(updatedIssue);
+  } catch (error) {
+    console.error("Error adding comment:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 module.exports = router;
